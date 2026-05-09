@@ -32,3 +32,4 @@ uvicorn app.main:app --reload
 ## Runtime Config Priority
 - API 运行时参数读取优先级：`SystemSetting(DB)` > `.env` > 代码默认值。
 - `PUT /api/v1/settings/{key}` only accepts keys in `EDITABLE_SETTING_KEYS`; successful updates write audit log.
+- `GET /api/v1/audit` (supports actor/action/decision/start_at/end_at/limit/offset)
