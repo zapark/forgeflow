@@ -9,3 +9,4 @@ class TaskCreate(BaseModel):
 class TaskControl(BaseModel):
     action: str
     reason: str | None = None
+    actor: str = "user"

@@ -27,14 +27,14 @@ def get_task(task_id: int):
     with get_session() as session:
         task = TaskService(session).get_task(task_id)
     if task is None:
-        raise HTTPException(status_code=404, detail="task not found")
+        raise HTTPException(status_code=400, detail="task not found or invalid action")
     return task
 
 
 @router.post("/tasks/{task_id}/control")
 def control_task(task_id: int, payload: TaskControl):
     with get_session() as session:
-        task = TaskService(session).control_task(task_id, payload.action)
+        task = TaskService(session).control_task(task_id, payload.action, payload.actor, payload.reason)
     if task is None:
-        raise HTTPException(status_code=404, detail="task not found")
+        raise HTTPException(status_code=400, detail="task not found or invalid action")
     return {"task_id": task.id, "status": task.status}

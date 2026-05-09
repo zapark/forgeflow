@@ -27,16 +27,16 @@ class ExecutionService:
         self._event(run.id, "EXECUTION_STARTED", {"task_id": task_id})
         return run
 
-    def timeline(self, task_id: int) -> list[WorkflowEvent]:
+    def timeline(self, task_id: int, event_type: str | None = None, limit: int = 50, offset: int = 0) -> list[WorkflowEvent]:
         runs = list(self.session.exec(select(WorkflowRun).where(WorkflowRun.task_id == task_id)))
         if not runs:
             return []
         run_ids = [r.id for r in runs if r.id is not None]
-        return list(
-            self.session.exec(
-                select(WorkflowEvent).where(WorkflowEvent.workflow_run_id.in_(run_ids)).order_by(WorkflowEvent.created_at)
-            )
-        )
+        query = select(WorkflowEvent).where(WorkflowEvent.workflow_run_id.in_(run_ids))
+        if event_type:
+            query = query.where(WorkflowEvent.event_type == event_type)
+        query = query.order_by(WorkflowEvent.created_at).offset(offset).limit(limit)
+        return list(self.session.exec(query))
 
     def approve_checkpoint(self, task_id: int, node_id: str, approved_by: str, comment: str | None) -> WorkflowRun | None:
         run = self.session.exec(

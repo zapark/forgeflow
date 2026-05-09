@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Session, select
 
+from app.models.audit import AuditLog
 from app.models.task import Task, TaskStatus
 from app.schemas.task import TaskCreate
 
@@ -20,9 +21,15 @@ class TaskService:
     def get_task(self, task_id: int) -> Task | None:
         return self.session.get(Task, task_id)
 
-    def control_task(self, task_id: int, action: str) -> Task | None:
+    ALLOWED_ACTIONS = {"pause", "resume", "cancel"}
+
+    def control_task(self, task_id: int, action: str, actor: str = "user", reason: str | None = None) -> Task | None:
         task = self.get_task(task_id)
         if task is None:
+            return None
+
+        if action not in self.ALLOWED_ACTIONS:
+            self._audit(actor, f"task.{action}", f"task:{task_id}", "DENY", "invalid action")
             return None
 
         if action == "pause":
@@ -36,7 +43,13 @@ class TaskService:
         self.session.add(task)
         self.session.commit()
         self.session.refresh(task)
+        self._audit(actor, f"task.{action}", f"task:{task_id}", "ALLOW", reason)
         return task
 
     def list_tasks(self) -> list[Task]:
         return list(self.session.exec(select(Task)))
+
+    def _audit(self, actor: str, action: str, target: str, decision: str, reason: str | None) -> None:
+        audit = AuditLog(actor=actor, action=action, target=target, decision=decision, reason=reason, trace_id=f"audit-{actor}")
+        self.session.add(audit)
+        self.session.commit()

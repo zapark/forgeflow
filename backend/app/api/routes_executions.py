@@ -17,9 +17,9 @@ def start_execution(task_id: int):
 
 
 @router.get("/executions/{task_id}/timeline")
-def get_timeline(task_id: int):
+def get_timeline(task_id: int, event_type: str | None = None, limit: int = 50, offset: int = 0):
     with get_session() as session:
-        timeline = ExecutionService(session).timeline(task_id)
+        timeline = ExecutionService(session).timeline(task_id, event_type=event_type, limit=limit, offset=offset)
     return timeline
 
 
