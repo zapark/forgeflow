@@ -1,0 +1,15 @@
+# ForgeFlow Backend (MVP Scaffold)
+
+## Run
+
+```bash
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+## APIs
+- `GET /health`
+- `POST /api/v1/tasks`
+- `GET /api/v1/tasks`
+- `GET /api/v1/tasks/{task_id}`
+- `POST /api/v1/tasks/{task_id}/control`
