@@ -13,3 +13,6 @@ uvicorn app.main:app --reload
 - `GET /api/v1/tasks`
 - `GET /api/v1/tasks/{task_id}`
 - `POST /api/v1/tasks/{task_id}/control`
+- `POST /api/v1/executions/{task_id}/start`
+- `GET /api/v1/executions/{task_id}/timeline`
+- `POST /api/v1/executions/{task_id}/checkpoint/{node_id}/approve`
