@@ -4,6 +4,8 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
+from app.core.config import settings
+
 
 class TaskStatus(str, Enum):
     CREATED = "CREATED"
@@ -20,6 +22,6 @@ class Task(SQLModel, table=True):
     title: str
     goal_text: str
     status: TaskStatus = Field(default=TaskStatus.CREATED)
-    created_by: str = Field(default="system")
+    created_by: str = Field(default=settings.default_created_by)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

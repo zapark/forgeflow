@@ -1,6 +1,8 @@
 from sqlmodel import Session, SQLModel, create_engine
 
-engine = create_engine("sqlite:///./forgeflow.db", echo=False)
+from app.core.config import settings
+
+engine = create_engine(settings.database_url, echo=False)
 
 
 def init_db() -> None:

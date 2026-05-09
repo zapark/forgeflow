@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlmodel import Session, select
 
+from app.core.config import settings
 from app.models.audit import AuditLog
 from app.models.task import Task, TaskStatus
 from app.schemas.task import TaskCreate
@@ -21,7 +22,7 @@ class TaskService:
     def get_task(self, task_id: int) -> Task | None:
         return self.session.get(Task, task_id)
 
-    ALLOWED_ACTIONS = {"pause", "resume", "cancel"}
+    ALLOWED_ACTIONS = settings.allowed_task_actions_set
 
     def control_task(self, task_id: int, action: str, actor: str = "user", reason: str | None = None) -> Task | None:
         task = self.get_task(task_id)

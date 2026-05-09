@@ -4,6 +4,7 @@
 
 ```bash
 pip install -r requirements.txt
+cp .env.example .env
 uvicorn app.main:app --reload
 ```
 
@@ -20,3 +21,7 @@ uvicorn app.main:app --reload
 ## Notes
 - `GET /api/v1/executions/{task_id}/timeline` supports `event_type`, `limit`, `offset` query params.
 - `POST /api/v1/tasks/{task_id}/control` enforces action whitelist: pause/resume/cancel.
+
+## Config
+- 配置统一在 `backend/app/core/config.py`，通过 `.env` 注入。
+- 可参考 `backend/.env.example`。

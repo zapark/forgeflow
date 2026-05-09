@@ -4,6 +4,8 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
+from app.core.config import settings
+
 
 class WorkflowStatus(str, Enum):
     CREATED = "CREATED"
@@ -16,8 +18,8 @@ class WorkflowStatus(str, Enum):
 class WorkflowRun(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     task_id: int = Field(index=True)
-    workflow_spec_version: str = Field(default="1.0.0")
-    current_node_id: str = Field(default="planner_start")
+    workflow_spec_version: str = Field(default=settings.default_workflow_spec_version)
+    current_node_id: str = Field(default=settings.default_workflow_start_node)
     status: WorkflowStatus = Field(default=WorkflowStatus.CREATED)
     started_at: datetime = Field(default_factory=datetime.utcnow)
     ended_at: datetime | None = None
