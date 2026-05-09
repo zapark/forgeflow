@@ -25,3 +25,6 @@ uvicorn app.main:app --reload
 ## Config
 - 配置统一在 `backend/app/core/config.py`，通过 `.env` 注入。
 - 可参考 `backend/.env.example`。
+- `GET /api/v1/settings`
+- `GET /api/v1/settings/{key}`
+- `PUT /api/v1/settings/{key}`
