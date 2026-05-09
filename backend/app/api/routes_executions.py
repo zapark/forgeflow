@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from app.core.config import settings
 from app.core.db import get_session
 from app.schemas.execution import CheckpointApprove, ExecutionStartResponse
+from app.services.runtime_config_service import RuntimeConfigService
 from app.services.execution_service import ExecutionService
 
 router = APIRouter(tags=["executions"])
@@ -18,9 +18,11 @@ def start_execution(task_id: int):
 
 
 @router.get("/executions/{task_id}/timeline")
-def get_timeline(task_id: int, event_type: str | None = None, limit: int = settings.timeline_default_limit, offset: int = 0):
+def get_timeline(task_id: int, event_type: str | None = None, limit: int | None = None, offset: int = 0):
     with get_session() as session:
-        safe_limit = min(limit, settings.timeline_max_limit)
+        runtime_cfg = RuntimeConfigService(session)
+        effective_limit = limit if limit is not None else runtime_cfg.timeline_default_limit()
+        safe_limit = min(effective_limit, runtime_cfg.timeline_max_limit())
         timeline = ExecutionService(session).timeline(task_id, event_type=event_type, limit=safe_limit, offset=offset)
     return timeline
 

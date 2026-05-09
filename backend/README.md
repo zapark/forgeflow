@@ -28,3 +28,6 @@ uvicorn app.main:app --reload
 - `GET /api/v1/settings`
 - `GET /api/v1/settings/{key}`
 - `PUT /api/v1/settings/{key}`
+
+## Runtime Config Priority
+- API 运行时参数读取优先级：`SystemSetting(DB)` > `.env` > 代码默认值。

@@ -4,6 +4,7 @@ from sqlmodel import Session, select
 
 from app.core.config import settings
 from app.models.audit import AuditLog
+from app.services.runtime_config_service import RuntimeConfigService
 from app.models.task import Task, TaskStatus
 from app.schemas.task import TaskCreate
 
@@ -22,14 +23,13 @@ class TaskService:
     def get_task(self, task_id: int) -> Task | None:
         return self.session.get(Task, task_id)
 
-    ALLOWED_ACTIONS = settings.allowed_task_actions_set
-
     def control_task(self, task_id: int, action: str, actor: str = "user", reason: str | None = None) -> Task | None:
         task = self.get_task(task_id)
         if task is None:
             return None
 
-        if action not in self.ALLOWED_ACTIONS:
+        allowed_actions = RuntimeConfigService(self.session).allowed_actions()
+        if action not in allowed_actions:
             self._audit(actor, f"task.{action}", f"task:{task_id}", "DENY", "invalid action")
             return None
 
