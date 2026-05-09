@@ -37,3 +37,8 @@ uvicorn app.main:app --reload
 - `GET /api/v1/audit/export.csv?actor=&action=&decision=&start_at=&end_at=&limit=1000`
 - `GET /api/v1/audit/stats?start_at=&end_at=`
 - `GET /api/v1/audit/stats/task/{task_id}`
+
+## Test
+```bash
+pytest -q
+```
