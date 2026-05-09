@@ -52,9 +52,28 @@ def list_task_audit(task_id: int, limit: int = 100, offset: int = 0):
 
 
 @router.get("/audit/export.csv")
-def export_audit_csv(limit: int = 1000):
+def export_audit_csv(
+    actor: str | None = None,
+    action: str | None = None,
+    decision: str | None = None,
+    start_at: datetime | None = None,
+    end_at: datetime | None = None,
+    limit: int = 1000,
+):
     with get_session() as session:
-        rows = list(session.exec(select(AuditLog).order_by(AuditLog.created_at.desc()).limit(limit)))
+        query = select(AuditLog)
+        if actor:
+            query = query.where(AuditLog.actor == actor)
+        if action:
+            query = query.where(AuditLog.action == action)
+        if decision:
+            query = query.where(AuditLog.decision == decision)
+        if start_at:
+            query = query.where(AuditLog.created_at >= start_at)
+        if end_at:
+            query = query.where(AuditLog.created_at <= end_at)
+        query = query.order_by(AuditLog.created_at.desc()).limit(limit)
+        rows = list(session.exec(query))
 
     buffer = io.StringIO()
     writer = csv.writer(buffer)
@@ -62,4 +81,8 @@ def export_audit_csv(limit: int = 1000):
     for r in rows:
         writer.writerow([r.id, r.actor, r.action, r.target, r.decision, r.reason or "", r.trace_id, r.created_at.isoformat()])
 
-    return StreamingResponse(iter([buffer.getvalue()]), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=audit_export.csv"})
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=audit_export.csv"},
+    )

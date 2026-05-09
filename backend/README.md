@@ -34,4 +34,4 @@ uvicorn app.main:app --reload
 - `PUT /api/v1/settings/{key}` only accepts keys in `EDITABLE_SETTING_KEYS`; successful updates write audit log.
 - `GET /api/v1/audit` (supports actor/action/decision/start_at/end_at/limit/offset)
 - `GET /api/v1/audit/task/{task_id}`
-- `GET /api/v1/audit/export.csv?limit=1000`
+- `GET /api/v1/audit/export.csv?actor=&action=&decision=&start_at=&end_at=&limit=1000`
