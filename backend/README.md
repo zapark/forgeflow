@@ -42,3 +42,6 @@ uvicorn app.main:app --reload
 ```bash
 pytest -q
 ```
+
+## CI/本地一致测试入口
+- 推荐使用 `backend/scripts/run_tests.sh` 作为统一测试入口。
