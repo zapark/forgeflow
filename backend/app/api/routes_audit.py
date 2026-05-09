@@ -86,3 +86,26 @@ def export_audit_csv(
         media_type="text/csv",
         headers={"Content-Disposition": "attachment; filename=audit_export.csv"},
     )
+
+
+@router.get("/audit/stats")
+def audit_stats(start_at: datetime | None = None, end_at: datetime | None = None):
+    with get_session() as session:
+        query = select(AuditLog)
+        if start_at:
+            query = query.where(AuditLog.created_at >= start_at)
+        if end_at:
+            query = query.where(AuditLog.created_at <= end_at)
+        rows = list(session.exec(query))
+
+    by_action: dict[str, int] = {}
+    by_decision: dict[str, int] = {}
+    for r in rows:
+        by_action[r.action] = by_action.get(r.action, 0) + 1
+        by_decision[r.decision] = by_decision.get(r.decision, 0) + 1
+
+    return {
+        "total": len(rows),
+        "by_action": by_action,
+        "by_decision": by_decision,
+    }
