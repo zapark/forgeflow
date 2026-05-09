@@ -100,11 +100,33 @@ def audit_stats(start_at: datetime | None = None, end_at: datetime | None = None
 
     by_action: dict[str, int] = {}
     by_decision: dict[str, int] = {}
+    by_actor: dict[str, int] = {}
+    for r in rows:
+        by_action[r.action] = by_action.get(r.action, 0) + 1
+        by_decision[r.decision] = by_decision.get(r.decision, 0) + 1
+        by_actor[r.actor] = by_actor.get(r.actor, 0) + 1
+
+    return {
+        "total": len(rows),
+        "by_action": by_action,
+        "by_decision": by_decision,
+        "by_actor": by_actor,
+    }
+
+
+@router.get("/audit/stats/task/{task_id}")
+def audit_stats_by_task(task_id: int):
+    with get_session() as session:
+        rows = list(session.exec(select(AuditLog).where(AuditLog.target == f"task:{task_id}")))
+
+    by_action: dict[str, int] = {}
+    by_decision: dict[str, int] = {}
     for r in rows:
         by_action[r.action] = by_action.get(r.action, 0) + 1
         by_decision[r.decision] = by_decision.get(r.decision, 0) + 1
 
     return {
+        "task_id": task_id,
         "total": len(rows),
         "by_action": by_action,
         "by_decision": by_decision,
