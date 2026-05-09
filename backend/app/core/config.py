@@ -17,10 +17,15 @@ class Settings(BaseSettings):
     allowed_task_actions: str = "pause,resume,cancel"
     timeline_default_limit: int = Field(default=50, ge=1, le=500)
     timeline_max_limit: int = Field(default=200, ge=1, le=1000)
+    editable_setting_keys: str = "ALLOWED_TASK_ACTIONS,TIMELINE_DEFAULT_LIMIT,TIMELINE_MAX_LIMIT"
 
     @property
     def allowed_task_actions_set(self) -> set[str]:
         return {x.strip() for x in self.allowed_task_actions.split(",") if x.strip()}
+
+    @property
+    def editable_setting_keys_set(self) -> set[str]:
+        return {x.strip() for x in self.editable_setting_keys.split(",") if x.strip()}
 
 
 settings = Settings()
