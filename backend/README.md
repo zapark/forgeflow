@@ -45,3 +45,5 @@ pytest -q
 
 ## CI/本地一致测试入口
 - 推荐使用 `backend/scripts/run_tests.sh` 作为统一测试入口。
+
+- 当前测试覆盖：`test_services.py`、`test_runtime_config.py`、`test_task_service_success.py`。
