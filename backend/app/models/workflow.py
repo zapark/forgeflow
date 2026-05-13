@@ -32,3 +32,27 @@ class WorkflowEvent(SQLModel, table=True):
     payload_json: str
     trace_id: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class RoleRun(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    workflow_run_id: int = Field(index=True)
+    role_name: str
+    input_json: str
+    output_json: str
+    status: str
+    started_at: datetime = Field(default_factory=datetime.utcnow)
+    ended_at: datetime | None = None
+
+
+class ToolRun(SQLModel, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    workflow_run_id: int = Field(index=True)
+    tool_name: str
+    permission_snapshot_json: str
+    input_json: str
+    output_json: str | None = None
+    error_json: str | None = None
+    duration_ms: int = 0
+    token_cost: float = 0
+    created_at: datetime = Field(default_factory=datetime.utcnow)

@@ -19,6 +19,14 @@ class RuntimeConfigService:
         raw = self.get("ALLOWED_TASK_ACTIONS", settings.allowed_task_actions)
         return {x.strip() for x in raw.split(",") if x.strip()}
 
+    def allowed_tool_permissions(self) -> set[str]:
+        raw = self.get("ALLOWED_TOOL_PERMISSIONS", settings.allowed_tool_permissions)
+        return {x.strip() for x in raw.split(",") if x.strip()}
+
+    def checkpoint_tool_risk_levels(self) -> set[str]:
+        raw = self.get("CHECKPOINT_TOOL_RISK_LEVELS", settings.checkpoint_tool_risk_levels)
+        return {x.strip().lower() for x in raw.split(",") if x.strip()}
+
     def timeline_default_limit(self) -> int:
         raw = self.get("TIMELINE_DEFAULT_LIMIT", str(settings.timeline_default_limit))
         return int(raw)

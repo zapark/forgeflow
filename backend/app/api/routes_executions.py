@@ -27,6 +27,15 @@ def get_timeline(task_id: int, event_type: str | None = None, limit: int | None 
     return timeline
 
 
+@router.get("/replay/{workflow_run_id}")
+def get_replay(workflow_run_id: int):
+    with get_session() as session:
+        replay = ExecutionService(session).replay(workflow_run_id)
+    if replay is None:
+        raise HTTPException(status_code=404, detail="workflow run not found")
+    return replay
+
+
 @router.post("/executions/{task_id}/checkpoint/{node_id}/approve")
 def approve_checkpoint(task_id: int, node_id: str, payload: CheckpointApprove):
     with get_session() as session:
